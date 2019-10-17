@@ -1,5 +1,5 @@
 import test from 'ava';
-import easyImport from '../';
+import easyImportSync from '../';
 import path from 'path';
 import postcss from 'postcss';
 
@@ -9,8 +9,10 @@ const msg = err => 'postcss-easy-import: ' + err;
 process.chdir(__dirname);
 
 function preprocess(input, output, opts, t) {
-    return postcss([ easyImport(opts) ]).process(input)
+    return postcss([ easyImportSync(opts) ]).process(input)
         .then(result => {
+            console.log(result.css);
+            console.log(output);
             t.is(result.css, output);
             t.is(result.warnings().length, 0);
         });
@@ -18,7 +20,7 @@ function preprocess(input, output, opts, t) {
 
 test('should fail on incorrect \'prefix\'', t => {
     t.throws(() => {
-        easyImport({
+        easyImportSync({
             prefix: 1
         });
     }, msg('\'prefix\' option should be a string or false'));
@@ -26,13 +28,13 @@ test('should fail on incorrect \'prefix\'', t => {
 
 test('should not fail on correct \'prefix\'', t => {
     t.notThrows(() => {
-        easyImport({
+        easyImportSync({
             prefix: 'some string'
         });
     });
 
     t.notThrows(() => {
-        easyImport({
+        easyImportSync({
             prefix: false
         });
     });
@@ -44,25 +46,25 @@ test('should fail on incorrect \'extensions\'', t => {
     );
 
     t.throws(() => {
-        easyImport({
+        easyImportSync({
             extensions: 1
         });
     }, error);
 
     t.throws(() => {
-        easyImport({
+        easyImportSync({
             extensions: ''
         });
     }, error);
 
     t.throws(() => {
-        easyImport({
+        easyImportSync({
             extensions: []
         });
     }, error);
 
     t.throws(() => {
-        easyImport({
+        easyImportSync({
             extensions: ['']
         });
     }, error);
@@ -70,13 +72,13 @@ test('should fail on incorrect \'extensions\'', t => {
 
 test('should not fail on correct \'extensions\'', t => {
     t.notThrows(() => {
-        easyImport({
+        easyImportSync({
             extensions: '.css'
         });
     });
 
     t.notThrows(() => {
-        easyImport({
+        easyImportSync({
             extensions: ['.css', '.scss']
         });
     });
